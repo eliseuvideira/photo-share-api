@@ -8,10 +8,25 @@ const id = (() => {
 const photos = [];
 
 const typeDefs = `
+  enum PhotoCategory {
+    SELFIE
+    PORTRAIT
+    ACTION
+    LANDSCAPE
+    GRAPHIC
+  }
+
   type Photo {
     id: ID!
     url: String!
     name: String!
+    description: String
+    category: PhotoCategory!
+  }
+
+  input CreatePhotoInput {
+    name: String!
+    category: PhotoCategory=PORTRAIT
     description: String
   }
 
@@ -21,7 +36,7 @@ const typeDefs = `
   }
 
   type Mutation {
-    createPhoto(name: String! description: String): Photo!
+    createPhoto(input: CreatePhotoInput): Photo!
   }
 `;
 
@@ -33,7 +48,7 @@ const resolvers = {
 
   Mutation: {
     createPhoto: (parent, args) => {
-      const photo = { ...args, id: id() };
+      const photo = { ...args.input, id: id() };
       photos.push(photo);
       return photo;
     },
