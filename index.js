@@ -1,14 +1,27 @@
 const { ApolloServer } = require("apollo-server");
 
+const photos = [];
+
 const typeDefs = `
   type Query {
     totalPhotos: Int!
+  }
+
+  type Mutation {
+    createPhoto(name: String! description: String): Boolean!
   }
 `;
 
 const resolvers = {
   Query: {
-    totalPhotos: () => 42,
+    totalPhotos: () => photos.length,
+  },
+
+  Mutation: {
+    createPhoto: (parent, args) => {
+      photos.push(args);
+      return true;
+    },
   },
 };
 
