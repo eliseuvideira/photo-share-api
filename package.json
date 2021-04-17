@@ -3,5 +3,13 @@
   "version": "1.0.0",
   "main": "index.js",
   "author": "Eliseu Videira <eliseuvideira1@gmail.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "apollo-server": "^2.23.0",
+    "graphql": "^15.5.0",
+    "nodemon": "^2.0.7"
+  },
+  "scripts": {
+    "dev": "nodemon -e graphql,js,json index.js"
+  }
 }
