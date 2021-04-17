@@ -37,8 +37,6 @@ input CreatePhotoInput {
 type Query {
   totalPhotos: Int!
   allPhotos: [Photo!]!
-}
-
-type Mutation {
-  createPhoto(input: CreatePhotoInput): Photo!
+  totalUsers: Int!
+  allUsers: [User!]!
 }

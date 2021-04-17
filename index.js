@@ -1,4 +1,9 @@
+const dotenv = require("dotenv-safe");
+
+dotenv.config();
+
 const express = require("express");
+const mongoose = require("mongoose");
 
 const app = express();
 
@@ -7,15 +12,27 @@ const { ApolloServer } = require("apollo-server-express");
 const { resolvers } = require("./resolvers");
 const typeDefs = fs.readFileSync("./typeDefs.graphql", "utf8");
 
-const server = new ApolloServer({ typeDefs, resolvers });
-
-server.applyMiddleware({ app });
-
 app.get("/", (req, res) => res.send("Welcome to PhotoShare API").end());
 
-const port = 4000;
+(async () => {
+  await mongoose.connect(process.env.MONGODB_URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    dbName: "photo-share-api",
+  });
 
-app.listen({ port }, () => {
-  console.info(`listening at http://localhost:${port}`);
-  console.info(`http://localhost:${port}${server.graphqlPath}`);
+  const db = mongoose.connection;
+
+  const server = new ApolloServer({ typeDefs, resolvers, context: { db } });
+
+  server.applyMiddleware({ app });
+
+  const port = 4000;
+
+  app.listen({ port }, () => {
+    console.info(`http://localhost:${port}${server.graphqlPath}`);
+  });
+})().catch((err) => {
+  console.error(err);
+  process.exit(1);
 });

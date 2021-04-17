@@ -1,61 +1,15 @@
 const { GraphQLScalarType } = require("graphql");
-
-const id = (() => {
-  let _id = 0;
-  return () => ++_id;
-})();
-
-const users = [
-  { userId: "mHattrup", name: "Mike Hattrup" },
-  { userId: "gPlake", name: "Glen Plake" },
-  { userId: "sSchmidt", name: "Scot Schmidt" },
-];
-
-const photos = [
-  {
-    photoId: "1",
-    name: "Dropping the Heart Chute",
-    description: "The heart chute is one of my favorite chutes",
-    category: "ACTION",
-    userId: "gPlake",
-    created: "3-28-1977",
-  },
-  {
-    photoId: "2",
-    name: "Enjoying the sunshine",
-    category: "SELFIE",
-    userId: "sSchmidt",
-    created: "1-2-1985",
-  },
-  {
-    photoId: "3",
-    name: "Gunbarrel 25",
-    description: "25 laps on gunbarrel today",
-    category: "LANDSCAPE",
-    userId: "sSchmidt",
-    created: "2018-04-15T19:09:57.308Z",
-  },
-];
-
-const tags = [
-  { photoId: "1", userId: "gPlake" },
-  { photoId: "2", userId: "sSchmidt" },
-  { photoId: "2", userId: "mHattrup" },
-  { photoId: "2", userId: "gPlake" },
-];
+const mongoose = require("mongoose");
 
 const resolvers = {
   Query: {
-    totalPhotos: () => photos.length,
-    allPhotos: () => photos,
-  },
-
-  Mutation: {
-    createPhoto: (parent, args) => {
-      const photo = { ...args.input, photoId: id(), created: new Date() };
-      photos.push(photo);
-      return photo;
-    },
+    totalPhotos: (parent, args, { db }) =>
+      db.collection("photos").estimatedDocumentCount(),
+    allPhotos: (parent, args, { db }) =>
+      db.collection("photos").find().toArray(),
+    totalUsers: (parent, args, { db }) =>
+      db.collection("users").estimatedDocumentCount(),
+    allUsers: (parent, args, { db }) => db.collection("users").find().toArray(),
   },
 
   Photo: {
