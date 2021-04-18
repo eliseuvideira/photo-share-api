@@ -40,3 +40,12 @@ type Query {
   totalUsers: Int!
   allUsers: [User!]!
 }
+
+type AuthPayload {
+  token: String!
+  user: User!
+}
+
+type Mutation {
+  githubAuth(code: String!): AuthPayload!
+}

@@ -1,5 +1,5 @@
 const { GraphQLScalarType } = require("graphql");
-const mongoose = require("mongoose");
+const { authorizeWithGithub } = require("./functions/authorizeWithGithub");
 
 const resolvers = {
   Query: {
@@ -36,6 +36,43 @@ const resolvers = {
     serialize: (value) => new Date(value).toISOString(),
     parseLiteral: (ast) => ast.value,
   }),
+
+  Mutation: {
+    githubAuth: async (parent, { code }, { db }) => {
+      const {
+        message,
+        access_token,
+        avatar_url,
+        login,
+        name,
+      } = await authorizeWithGithub({
+        client_id: process.env.GITHUB_CLIENT_ID,
+        client_secret: process.env.GITHUB_CLIENT_SECRET,
+        code,
+      });
+
+      if (message) {
+        throw new Error(message);
+      }
+
+      const {
+        ops: [user],
+      } = await db
+        .collection("users")
+        .replaceOne(
+          { userId: login },
+          {
+            name,
+            avatar: avatar_url,
+            githubToken: access_token,
+            userId: login,
+          },
+          { upsert: true }
+        );
+
+      return { user, token: access_token };
+    },
+  },
 };
 
 exports.resolvers = resolvers;
