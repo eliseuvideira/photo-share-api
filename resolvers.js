@@ -15,7 +15,7 @@ const resolvers = {
 
   Photo: {
     photoId: (photo) => photo._id,
-    url: (photo) => `http://localhost:4000/img/${photo.photoId}.jpg`,
+    url: (photo) => `http://localhost:4000/img/${photo._id}.jpg`,
     postedBy: (photo, args, { db }) =>
       db.collection("users").findOne({ userId: photo.userId }),
     taggedUsers: (photo) =>
