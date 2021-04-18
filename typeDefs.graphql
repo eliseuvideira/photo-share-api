@@ -31,7 +31,6 @@ input CreatePhotoInput {
   name: String!
   category: PhotoCategory = PORTRAIT
   description: String
-  userId: ID!
 }
 
 type Query {
@@ -39,6 +38,7 @@ type Query {
   allPhotos: [Photo!]!
   totalUsers: Int!
   allUsers: [User!]!
+  me: User
 }
 
 type AuthPayload {
@@ -48,4 +48,5 @@ type AuthPayload {
 
 type Mutation {
   githubAuth(code: String!): AuthPayload!
+  createPhoto(input: CreatePhotoInput!): Photo!
 }

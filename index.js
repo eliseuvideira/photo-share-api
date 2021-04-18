@@ -23,7 +23,15 @@ app.get("/", (req, res) => res.send("Welcome to PhotoShare API").end());
 
   const db = mongoose.connection;
 
-  const server = new ApolloServer({ typeDefs, resolvers, context: { db } });
+  const server = new ApolloServer({
+    typeDefs,
+    resolvers,
+    context: async ({ req }) => {
+      const githubToken = req.headers.authorization;
+      const user = await db.collection("users").findOne({ githubToken });
+      return { db, user };
+    },
+  });
 
   server.applyMiddleware({ app });
 
