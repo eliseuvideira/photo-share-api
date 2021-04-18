@@ -4,9 +4,16 @@ export const ROOT_QUERY = gql`
   query allUsers {
     totalUsers
     allUsers {
-      userId
-      name
-      avatar
+      ...userInfo
     }
+    me {
+      ...userInfo
+    }
+  }
+
+  fragment userInfo on User {
+    userId
+    name
+    avatar
   }
 `;
